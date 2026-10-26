@@ -1,0 +1,27 @@
+@extends('layouts.app')
+@section('title', 'Dashboard')
+@section('page-title', 'Dashboard')
+@section('content')
+<div class="welcome-row"><div><h2>Ringkasan bisnis</h2><p>Pantau stok dan aktivitas inventori hari ini.</p></div><div class="quick-actions"><a class="btn btn-outline" href="{{ route('purchases.create') }}">＋ Stock-in</a><a class="btn btn-primary" href="{{ route('sales.create') }}">＋ Penjualan baru</a></div></div>
+<div class="stat-grid">
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon indigo">▣</span><span class="stat-period">Semua data</span></div><p>Total produk</p><strong>{{ number_format($productCount) }}</strong><small>Produk terdaftar</small></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon green">↗</span><span class="stat-period">Hari ini</span></div><p>Penjualan hari ini</p><strong>Rp {{ number_format($todaySales, 0, ',', '.') }}</strong><small>Total transaksi selesai</small></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">▤</span><span class="stat-period">Bulan berjalan</span></div><p>Penjualan bulan ini</p><strong>Rp {{ number_format($monthSales, 0, ',', '.') }}</strong><small>{{ number_format($salesCount) }} transaksi penjualan total</small></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">⚠</span><span class="stat-period">Perlu dicek</span></div><p>Stok menipis</p><strong>{{ number_format($lowStockCount) }}</strong><small><a href="{{ route('low-stock.index') }}">Lihat daftar stok →</a></small></article>
+</div>
+<div class="dashboard-grid">
+    <section class="panel panel-wide"><div class="panel-heading"><div><h3>Produk dengan stok rendah</h3><p>Stok saat ini sama dengan atau di bawah batas minimum.</p></div><a class="text-link" href="{{ route('low-stock.index') }}">Lihat semua →</a></div>
+        @if($lowStockProducts->isEmpty())<div class="empty-state"><span>✓</span><strong>Semua stok aman</strong><p>Tidak ada produk di bawah batas minimum saat ini.</p></div>@else
+        <div class="table-wrap"><table><thead><tr><th>Produk</th><th>Kategori</th><th>Stok saat ini</th><th>Batas minimum</th><th>Status</th></tr></thead><tbody>@foreach($lowStockProducts as $product)<tr><td><a class="table-strong" href="{{ route('products.show', $product) }}">{{ $product->name }}</a><small class="cell-sub">{{ $product->sku }}</small></td><td>{{ $product->category->name }}</td><td><strong>{{ $product->stock }}</strong></td><td>{{ $product->minimum_stock }}</td><td><span class="status-badge warning">Stok rendah</span></td></tr>@endforeach</tbody></table></div>@endif
+    </section>
+    <section class="panel"><div class="panel-heading"><div><h3>Jalur cepat</h3><p>Aktivitas yang sering digunakan.</p></div></div><div class="shortcut-list"><a href="{{ route('products.index') }}"><span class="shortcut-icon indigo">▣</span><span><strong>Daftar produk</strong><small>Cari SKU, stok, dan harga</small></span><b>→</b></a><a href="{{ route('purchases.index') }}"><span class="shortcut-icon green">↙</span><span><strong>Riwayat pembelian</strong><small>Lihat stock-in dari supplier</small></span><b>→</b></a><a href="{{ route('sales.index') }}"><span class="shortcut-icon blue">↗</span><span><strong>Riwayat penjualan</strong><small>Lihat stock-out dan total</small></span><b>→</b></a>@if(auth()->user()->isAdmin())<a href="{{ route('users.index') }}"><span class="shortcut-icon orange">♙</span><span><strong>Kelola pengguna</strong><small>Atur akun Admin dan Staff</small></span><b>→</b></a>@endif</div></section>
+</div>
+<div class="dashboard-grid lower-grid">
+    <section class="panel"><div class="panel-heading"><div><h3>Penjualan terbaru</h3><p>Transaksi paling baru.</p></div><a class="text-link" href="{{ route('sales.index') }}">Semua →</a></div>
+        @forelse($recentSales as $sale)<a class="activity-row" href="{{ route('sales.show', $sale) }}"><span class="activity-icon blue">↗</span><span class="activity-main"><strong>{{ $sale->sale_number }}</strong><small>{{ $sale->user->name }} · {{ $sale->sold_at->format('d/m/Y H:i') }}</small></span><span class="activity-value">Rp {{ number_format($sale->total, 0, ',', '.') }}<small class="status-text {{ $sale->status === 'completed' ? 'text-green' : 'text-muted' }}">{{ $sale->status === 'completed' ? 'Selesai' : 'Dibatalkan' }}</small></span></a>@empty<div class="empty-compact">Belum ada transaksi penjualan.</div>@endforelse
+    </section>
+    <section class="panel"><div class="panel-heading"><div><h3>Pembelian terbaru</h3><p>Riwayat penambahan stok.</p></div><a class="text-link" href="{{ route('purchases.index') }}">Semua →</a></div>
+        @forelse($recentPurchases as $purchase)<a class="activity-row" href="{{ route('purchases.show', $purchase) }}"><span class="activity-icon green">↙</span><span class="activity-main"><strong>{{ $purchase->purchase_number }}</strong><small>{{ $purchase->supplier->name }} · {{ $purchase->purchased_at->format('d/m/Y H:i') }}</small></span><span class="activity-value">Rp {{ number_format($purchase->total, 0, ',', '.') }}<small class="status-text {{ $purchase->status === 'completed' ? 'text-green' : 'text-muted' }}">{{ $purchase->status === 'completed' ? 'Selesai' : 'Dibatalkan' }}</small></span></a>@empty<div class="empty-compact">Belum ada transaksi pembelian.</div>@endforelse
+    </section>
+</div>
+@endsection

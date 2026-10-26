@@ -1,0 +1,10 @@
+@extends('layouts.app')
+@section('title', 'Kategori')
+@section('page-title', 'Kategori')
+@section('content')
+<div class="page-intro"><div><h2>Master kategori</h2><p>Kelompokkan produk agar data inventori mudah dicari.</p></div>@if(auth()->user()->isAdmin())<a class="btn btn-primary" href="{{ route('categories.create') }}">＋ Tambah kategori</a>@endif</div>
+<section class="panel"><form class="filter-row" method="GET"><div class="search-field"><span>⌕</span><input name="q" value="{{ request('q') }}" placeholder="Cari nama kategori..."></div><button class="btn btn-secondary" type="submit">Cari</button><a class="btn btn-ghost" href="{{ route('categories.index') }}">Reset</a></form>
+<div class="table-wrap"><table><thead><tr><th>Nama kategori</th><th>Deskripsi</th><th>Jumlah produk</th>@if(auth()->user()->isAdmin())<th>Aksi</th>@endif</tr></thead><tbody>
+@forelse($categories as $category)<tr><td><span class="category-symbol">◫</span><strong>{{ $category->name }}</strong></td><td>{{ $category->description ?: '—' }}</td><td><span class="count-chip">{{ $category->products_count }} produk</span></td>@if(auth()->user()->isAdmin())<td><div class="actions"><a class="icon-link" href="{{ route('categories.edit', $category) }}">Edit</a><form method="POST" action="{{ route('categories.destroy', $category) }}" data-confirm="Hapus kategori ini?">@csrf @method('DELETE')<button class="link-danger" type="submit">Hapus</button></form></div></td>@endif</tr>@empty<tr><td colspan="4"><div class="empty-state"><span>◫</span><strong>Belum ada kategori</strong><p>Tambahkan kategori untuk mulai mengelompokkan produk.</p></div></td></tr>@endforelse
+</tbody></table></div><div class="table-bottom">@include('partials.pagination-note', ['paginator' => $categories]){{ $categories->links() }}</div></section>
+@endsection

@@ -1,0 +1,9 @@
+@extends('layouts.app')
+@section('title', $supplier->exists ? 'Edit Supplier' : 'Tambah Supplier')
+@section('page-title', $supplier->exists ? 'Edit Supplier' : 'Tambah Supplier')
+@section('content')
+<div class="form-page-head"><a class="back-link" href="{{ route('suppliers.index') }}">← Kembali ke supplier</a><h2>{{ $supplier->exists ? 'Perbarui data supplier' : 'Daftarkan supplier baru' }}</h2><p>Kontak pemasok membantu pencatatan transaksi pembelian.</p></div>
+<section class="panel form-panel"><form method="POST" action="{{ $supplier->exists ? route('suppliers.update', $supplier) : route('suppliers.store') }}">@csrf @if($supplier->exists)@method('PUT')@endif
+<div class="form-grid"><div class="form-field form-span"><label for="name">Nama supplier <span class="required">*</span></label><input id="name" name="name" value="{{ old('name', $supplier->name) }}" required maxlength="150" placeholder="Nama usaha pemasok"><x-field-error name="name" /></div><div class="form-field"><label for="phone">Nomor telepon</label><input id="phone" name="phone" value="{{ old('phone', $supplier->phone) }}" maxlength="40" placeholder="08xxxxxxxxxx"><x-field-error name="phone" /></div><div class="form-field"><label for="email">Email</label><input id="email" type="email" name="email" value="{{ old('email', $supplier->email) }}" maxlength="255" placeholder="supplier@contoh.test"><x-field-error name="email" /></div><div class="form-field form-span"><label for="address">Alamat</label><textarea id="address" name="address" rows="3" maxlength="2000" placeholder="Alamat supplier...">{{ old('address', $supplier->address) }}</textarea><x-field-error name="address" /></div></div>
+<div class="form-actions"><a class="btn btn-ghost" href="{{ route('suppliers.index') }}">Batal</a><button class="btn btn-primary" type="submit">{{ $supplier->exists ? 'Simpan perubahan' : 'Simpan supplier' }}</button></div></form></section>
+@endsection

@@ -1,0 +1,1 @@
+<div class="pagination-note">Menampilkan {{ $paginator->firstItem() ?? 0 }}–{{ $paginator->lastItem() ?? 0 }} dari {{ $paginator->total() }} data</div>

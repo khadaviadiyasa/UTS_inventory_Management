@@ -1,0 +1,3 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>@yield('title', 'Login') · {{ config('app.name') }}</title><link rel="stylesheet" href="{{ asset('css/app.css') }}"></head>
+<body class="guest-body"><div class="guest-wrap"><a class="brand guest-brand" href="{{ route('login') }}"><span class="brand-mark">CA</span><span><strong>Cakrawala</strong><small>Inventory & Sales</small></span></a>@include('partials.flash')@yield('content')<p class="guest-foot">Inventory & Sales · Kelola bisnis dengan lebih jelas</p></div></body></html>
